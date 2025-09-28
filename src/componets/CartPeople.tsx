@@ -1,16 +1,48 @@
 import React from 'react';
-import { Person } from '../assets/data/objPeopleData';
+import { useNavigate } from 'react-router-dom';
+import { BsArrowUpRightCircle } from "react-icons/bs";
+
 
 interface CartPeopleProps {
-  person: Person;
+  // @ts-ignore
+  person: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    dateAge: string;
+    age: number;
+    description: string;
+    avatarUrl: string;
+    galleryUrl: string[];
+    connectionGroup: string[];
+    x: number;
+    y: number;
+  };
 }
 
+
 const CartPeople: React.FC<CartPeopleProps> = ({ person }) => {
+
+  const navigate = useNavigate();
+
+  const handleLearnMore = () => {
+    navigate(`/${person.lastName}_${person.firstName}/${person.id}`);
+  };
+
   return (
-    <div className="cart-people">
-      <img src={`/src/assets/${person.photo}`} alt={`${person.firstName} ${person.lastName}`} />
-      <h2>{person.firstName} {person.lastName}</h2>
-      <p>{person.description}</p>
+    <div className="cartPeople">
+      <div className="cartPeople__head">
+        <div className="cartPeople__head-container">
+          <h3 className='cartPeople__head-name'>{person.firstName}<br />{person.lastName}</h3>
+          <h5 className='cartPeople__head-age'><strong>Дата рождения:</strong> <br />{person.dateAge}</h5>
+        </div>
+        <div className="cartPeople__head-images">
+          <img className='' src={person.avatarUrl} alt={`${person.firstName} ${person.lastName}`} />
+        </div>
+      </div>
+      <p className='cartPeople__description'>{person.description}</p>
+      <button className='cartPeople__button button'onClick={handleLearnMore}>Подробнее<BsArrowUpRightCircle className='cartPeople__button-img' color='white' fontSize="40"/></button>
     </div>
   );
 };

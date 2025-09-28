@@ -1,0 +1,21 @@
+@use 'normalize';
+@use 'fonts';
+@use 'variables';
+@use 'utils';
+@use 'globals';
+
+@use 'blocks/header';
+@use 'blocks/canvas';
+@use 'blocks/button';
+@use 'blocks/cartPeople';
+@use 'blocks/personPage';
+@use 'blocks/home';
+@use 'blocks/animatedRectangles';
+@use 'blocks/accordion';
+@use 'blocks/personPageSwiper';
+@use 'blocks/animations';
+@use 'blocks/loader';
+@use 'blocks/searchBar';
+
+
+

@@ -1,0 +1,40 @@
+@use '../helpers' as *;
+
+.personPage{
+    max-width: 1320px;
+    margin: rem(100) auto;
+    padding: 0 rem(10);
+
+    &__mainInfo{
+        display: flex;
+        justify-content: space-between;
+        gap: rem(20);
+        height: 100%;
+        width: 100%;
+    }
+    &__mainInfo-text{
+        width: 70%;
+    }
+    &__mainInfo-name{
+        font-size: rem(40);
+        text-transform: uppercase;
+        color: var(--color-dark);
+        line-height: 110%;
+    }
+    &__mainInfo-photo{
+        overflow: hidden;
+        border-radius: rem(4);
+        width: 25%;
+    }
+    @include mobile {
+        &__mainInfo-photo{
+            width: 100%;
+        }
+        &__mainInfo{
+            flex-direction: column;
+        }
+        &__mainInfo-text{
+            width: 100%;
+        }
+    }
+}
