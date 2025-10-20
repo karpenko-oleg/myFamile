@@ -4,37 +4,31 @@ import { useSound } from '../hooks/useSound';
 const AnimatedLoader: React.FC = () => {
   const playSound = useSound();
 
-  // Воспроизводим звук только один раз при монтировании компонента
   useEffect(() => {
     playSound();
-  }, [playSound]); // Добавляем playSound в зависимости
+  }, [playSound]);
 
   return (
-    <div className="loader-overlay">
-      <svg 
-        width="200" 
-        height="200" 
-        viewBox="0 0 200 200" 
-        className="animated-svg"
-      >
-        <text
-          x="50%"
-          y="50%"
-          textAnchor="middle"
-          dy="0.3em"
-          className="loader-text"
-        >
-          моя родословная
-        </text>
+    <div className="preloader">
+      <div className="preloader__container">
+        <h1 className="family-title">Род Клименко</h1>
         
-        <path
-          className="path"
-          d="M20,100 Q100,20 180,100 Q100,180 20,100 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-      </svg>
+        <svg 
+          width="231" 
+          height="183" 
+          viewBox="0 0 231 183" 
+          className="signature-svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <path 
+            d="M0.5 92.9999C0.5 92.9999 3.5 73.4999 20.75 63.7499C38 53.9999 41 34.4999 41 34.4999C49.0058 76.4813 61.5 106 61.5 142C61.5 178 41 155 41 155C41 155 39.4197 137.82 41 127C43.844 107.528 61 80.7499 61 80.7499M81 34.4999C61.5 16.9999 61 80.7499 61 80.7499M61 80.7499C73.4968 95.8827 81 119.5 93 119.5C105 119.5 125.5 6.49992 125.5 6.49992C133.115 45.3571 145 63.7499 145 106C145 148.25 168.5 6.49992 168.5 6.49992C173.186 45.3571 162.5 92.4999 180.5 106C198.5 119.5 198.5 34.4999 216.5 6.49992C234.5 -21.5001 209.636 64.2935 228 92.9999C253.724 133.212 26.8904 148.693 0.5 182"
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+            className="signature-path"
+          />
+        </svg>
+      </div>
     </div>
   );
 };

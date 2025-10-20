@@ -52,29 +52,31 @@ const App: React.FC = () => {
     return () => clearTimeout(animationTimer);
   };
 
-  // Если не авторизован - показываем форму входа
-  if (!isAuthenticated) {
-    return <AuthForm onSuccess={handleAuthSuccess} />;
-  }
-
   // Если авторизован, но показываем лоадер
   if (showLoader && !loaderFinished) {
     return <AnimatedLoader />;
   }
 
   return (
-    <div className="app">
-      <Router>
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/:name/:id" element={<PersonPage />} />
-            <Route path="*" element={<Nopage />} />
-          </Routes>
-        </main>
-      </Router>
-    </div>
+    <>
+      {isAuthenticated ? (
+        <div className="app">
+          <Router basename="/myFamile">
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/:name/:id" element={<PersonPage />} />
+                <Route path="*" element={<Nopage />} />
+              </Routes>
+            </main>
+          </Router>
+        </div>
+      ): (
+        <AuthForm onSuccess={handleAuthSuccess} />
+      )}
+    </>
+    
   );
 };
 

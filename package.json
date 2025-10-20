@@ -3,15 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "./",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@types/gsap": "^1.20.2",
     "@types/react-router-dom": "^5.3.3",
+    "gh-pages": "^6.3.0",
     "gsap": "^3.12.7",
     "pinch-zoom-js": "^2.3.5",
     "react": "^19.0.0",

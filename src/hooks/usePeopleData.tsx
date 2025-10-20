@@ -5,9 +5,18 @@ export interface Person {
   id: string;
   firstName: string;
   lastName: string;
+  patronymic: string;
   email: string;
-  dateAge: string;
+  phone: string;
+  address: string;
+  placeBirth: string;
   age: number;
+  dateAge: string;
+  typeActivity: string;
+  maritalStatus: string;
+  education: string;
+  kid: string;
+  interests: string;
   description: string;
   avatarUrl: string;
   galleryUrl: string[];
@@ -15,6 +24,7 @@ export interface Person {
   y: number;
   parents: string[];
   children: string[];
+  spouses: string[];
   connectionGroup: string;
 }
 
@@ -22,9 +32,11 @@ interface Connection {
   id: string;
   parentId: string;
   childId: string;
+  spousesId: string[];
   connectionId: string;
   x: number;
   y: number;
+  type: 'parent-child' | 'spouse';
 }
 
 interface PeopleDataContextType {
@@ -49,16 +61,12 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     window[callbackName] = (response: any[]) => {
       try {
-        console.log('Raw response:', response);
-
-        // Парсим людей
         const peopleData: Person[] = response.map((item, index) => {
           const parseIds = (value: any): string[] => {
             if (!value) return [];
             if (typeof value === 'string') {
-              // Удаляем лишние пробелы и кавычки
               return value
-                .replace(/['"]+/g, '') // Удаляем кавычки
+                .replace(/['"]+/g, '')
                 .split(',')
                 .map(s => s.trim())
                 .filter(Boolean)
@@ -73,16 +81,22 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             return [];
           };
 
-          console.log(`Item ${index} raw parents:`, item.parents, 'typeof:', typeof item.parents);
-          console.log(`Item ${index} raw children:`, item.children, 'typeof:', typeof item.children);
-
           return {
-            id: item.ID?.toString() || `id-${index}`,
+            id: item.ID?.toString(),
             firstName: item.Имя || '',
             lastName: item.Фамилия || '',
+            patronymic: item.Отчество || '',
             email: item.Email || '',
+            phone: item.Телефон || '',
+            address: item.Адрес || '',
+            placeBirth: item.МестоРождения || '',
             age: Number(item.Возраст) || 0,
             dateAge: formatDate(item.Рождение) || '',
+            typeActivity: item.РодДеятельности || '',
+            maritalStatus: item.СемейноеПоложение || '',
+            education: item.Образование || '',
+            kid: item.Дети || '',
+            interests: item.Интересы || '',
             description: item.Описание || '',
             avatarUrl: item.avatar || '',
             galleryUrl: item.gallery
@@ -95,21 +109,19 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             y: Number(item['По оси Y']) || 0,
             parents: parseIds(item.parents),
             children: parseIds(item.children),
+            spouses: parseIds(item.spouses),
             connectionGroup: item.connection?.toString() || 'default',
           };
         });
 
-        console.log('Parsed people:', peopleData);
-
-        // Создаем карту людей
         const peopleMap = new Map(peopleData.map(person => [person.id, person]));
-        console.log('People map keys:', Array.from(peopleMap.keys()));
 
         // Генерируем связи
         const connections: Connection[] = [];
+
+        // 1. Родительско-детские связи
         peopleData.forEach(person => {
           person.parents.forEach(parentId => {
-            // Удаляем возможные кавычки из parentId
             const cleanParentId = parentId.replace(/['"]+/g, '');
             if (peopleMap.has(cleanParentId)) {
               const parent = peopleMap.get(cleanParentId)!;
@@ -117,9 +129,11 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 id: `${cleanParentId}-${person.id}`,
                 parentId: cleanParentId,
                 childId: person.id,
+                spousesId: [], // пустой массив для родительско-детских связей
                 connectionId: person.connectionGroup || 'default',
                 x: parent.x,
                 y: parent.y,
+                type: 'parent-child'
               });
             } else {
               console.warn(`Parent ${cleanParentId} not found for person ${person.id}`);
@@ -127,8 +141,35 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           });
         });
 
-        console.log('Generated connections:', connections);
+        // 2. Связи между супругами
+        peopleData.forEach(person => {
+          person.spouses.forEach(spouseId => {
+            const cleanSpouseId = spouseId.replace(/['"]+/g, '');
+            
+            // Проверяем, существует ли супруг и чтобы не дублировать связи
+            if (peopleMap.has(cleanSpouseId) && person.id < cleanSpouseId) {
+              const spouse = peopleMap.get(cleanSpouseId)!;
+              
+              // Проверяем, есть ли общие дети у этих супругов
+              const hasCommonChildren = person.children.some(childId => 
+                spouse.children.includes(childId)
+              ) || spouse.children.some(childId => 
+                person.children.includes(childId)
+              );
 
+              connections.push({
+                id: `${person.id}-${cleanSpouseId}-spouse`,
+                parentId: person.id,
+                childId: cleanSpouseId,
+                spousesId: [person.id, cleanSpouseId],
+                connectionId: person.connectionGroup || 'default',
+                x: person.x,
+                y: person.y,
+                type: 'spouse'
+              });
+            }
+          });
+        });
         setState({
           people: peopleData,
           connections,
@@ -136,7 +177,6 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           error: null,
         });
       } catch (err) {
-        console.error('Parsing error:', err);
         setState({
           people: [],
           connections: [],
@@ -150,12 +190,10 @@ export const PeopleDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const URL = import.meta.env.VITE_API_URL;
     const TOKEN = import.meta.env.VITE_API_TOKEN;
     const apiUrl = `${URL}?token=${TOKEN}&callback=${callbackName}`;
-    console.log('Loading script with URL:', apiUrl);
 
     const script = document.createElement('script');
     script.src = apiUrl;
     script.onerror = () => {
-      console.error('Script loading failed');
       setState((prev) => ({
         ...prev,
         loading: false,

@@ -4,11 +4,11 @@ import { BsArrowUpRightCircle } from "react-icons/bs";
 
 
 interface CartPeopleProps {
-  // @ts-ignore
   person: {
     id: string;
     firstName: string;
     lastName: string;
+    patronymic: string;
     email: string;
     dateAge: string;
     age: number;
@@ -34,7 +34,7 @@ const CartPeople: React.FC<CartPeopleProps> = ({ person }) => {
     <div className="cartPeople">
       <div className="cartPeople__head">
         <div className="cartPeople__head-container">
-          <h3 className='cartPeople__head-name'>{person.firstName}<br />{person.lastName}</h3>
+          <h3 className='cartPeople__head-name'>{person.lastName}<br />{person.firstName}<br />{person.patronymic}</h3>
           <h5 className='cartPeople__head-age'><strong>Дата рождения:</strong> <br />{person.dateAge}</h5>
         </div>
         <div className="cartPeople__head-images">

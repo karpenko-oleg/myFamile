@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigation, Pagination, A11y, EffectCoverflow, FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { IoMdClose } from "react-icons/io";
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -31,160 +32,100 @@ const PersonPageSwiper: React.FC<Photo> = ({ photoAlbum }) => {
   };
 
   return (
-    <div className={`personPageSwiper ${isFullScreen ? "fullscreen" : ""}`}>
-      <button onClick={toggleFullScreen} className="fullscreen-button">
-        {isFullScreen ? "Закрыть" : "Полный экран"}
+    <div className='personPageSwiper'>
+      <div className={`${isFullScreen ? "personPageSwiper__fullscreenBg" : ""}`}>
+      <button onClick={toggleFullScreen} className="personPageSwiper__fullscreenBtn">
+        {isFullScreen ? <IoMdClose fontSize="22"/> : "Полный экран"}
       </button>
-
       {isFullScreen ? (
-        // Полноэкранный режим - свободное перемещение
-        <Swiper
-          modules={[Navigation, Pagination, A11y, FreeMode]}
-          spaceBetween={20}
-          slidesPerView={3}
-          navigation
-          pagination={{ 
-            clickable: true,
-            dynamicBullets: true 
-          }}
-          freeMode={{
-            enabled: true,
-            momentum: true,
-            momentumBounce: true,
-            momentumVelocityRatio: 0.5,
-            sticky: false
-          }}
-          centeredSlides={true}
-          initialSlide={Math.floor(photoAlbum.length / 2)}
-          loop={true}
-          className="fullscreen-swiper"
-          keyboard={{ enabled: true }}
-          mousewheel={{
-            forceToAxis: true,
-            sensitivity: 1
-          }}
-          breakpoints={{
-            320: {
-              slidesPerView: 1,
-              spaceBetween: 10,
-              freeMode: {
-                enabled: true,
-                momentum: true
+          <Swiper
+            spaceBetween={20}
+            slidesPerView="auto"
+            navigation
+            pagination={{ 
+              clickable: true,
+              dynamicBullets: true 
+            }}
+            initialSlide={Math.floor(photoAlbum.length / 2)}
+            loop={true}
+            className="personPageSwiper__fullscreen-swiperBg"  
+            modules={[Navigation, Pagination, FreeMode]}    
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+            
+              },
+              768: {
+                slidesPerView: 2,
+          
+              },
+              1024: {
+                slidesPerView: 3,
+      
+              },
+              1440: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+            
               }
-            },
-            768: {
-              slidesPerView: 2,
-              spaceBetween: 15,
-              freeMode: {
-                enabled: true,
-                momentum: true
-              }
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 20,
-              freeMode: {
-                enabled: true,
-                momentum: true
-              }
-            },
-            1440: {
-              slidesPerView: 4,
-              spaceBetween: 25,
-              freeMode: {
-                enabled: true,
-                momentum: true
-              }
-            }
-          }}
-        >
-          {photoAlbum?.map((urlSrc, index) => (
-            <SwiperSlide key={index}>
-              <div className="slide-container">
+            }}
+          >
+            {photoAlbum?.map((urlSrc, index) => (
+              <SwiperSlide key={index}>
                 <img 
-                  src={urlSrc} 
-                  alt={`Gallery image ${index + 1}`}
-                  className="swiper-image"
-                  loading="lazy"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      ) : (
-        // Обычный режим - 3 слайда с coverflow эффектом
-        <Swiper
-          modules={[Navigation, Pagination, A11y, EffectCoverflow]}
-          spaceBetween={30}
-          slidesPerView={3}
-          navigation
-          pagination={{ 
-            clickable: true,
-            dynamicBullets: true
-          }}
-          effect="coverflow"
-          centeredSlides={true}
-          initialSlide={Math.floor(photoAlbum.length / 2)}
-          loop={true}
-          className="personPageSwiper-swiper"
-          keyboard={{ enabled: true }}
-          coverflowEffect={{
-            rotate: 0, // Уменьшил вращение для лучшего вида
-            stretch: 0,
-            depth: 100,
-            modifier: 2,
-            slideShadows: false, // Убрал тени для чистоты
-          }}
-          breakpoints={{
-            320: {
-              slidesPerView: 1,
-              spaceBetween: 10,
-              coverflowEffect: {
-                rotate: 0,
-                stretch: 0,
-                depth: 50,
-                modifier: 1,
-                slideShadows: false
+                    src={urlSrc} 
+                    alt={`Gallery image ${index + 1}`}
+                    className="personPageSwiper__fullscreen-swiperImage"
+                    loading="lazy"
+                  />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <>
+          <Swiper
+            modules={[Navigation, Pagination, A11y, EffectCoverflow]}
+            spaceBetween={15}
+            slidesPerView={4}
+            navigation
+            pagination={{ 
+              clickable: true,
+              dynamicBullets: true
+            }}
+            centeredSlides={true}
+            initialSlide={Math.floor(photoAlbum.length / 2)}
+            loop={true}
+            className="personPageSwiper__swiper"
+            breakpoints={{
+              320: {
+                slidesPerView: 1.5,
+                spaceBetween: 10,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 20,
               }
-            },
-            768: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-              coverflowEffect: {
-                rotate: 0,
-                stretch: 0,
-                depth: 80,
-                modifier: 1.5,
-                slideShadows: false
-              }
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-              coverflowEffect: {
-                rotate: 0,
-                stretch: 0,
-                depth: 100,
-                modifier: 2,
-                slideShadows: false
-              }
-            }
-          }}
-        >
-          {photoAlbum?.map((urlSrc, index) => (
-            <SwiperSlide key={index}>
-              <div className="slide-container">
+            }}
+          >
+            {photoAlbum?.map((urlSrc, index) => (
+              <SwiperSlide key={index}>
                 <img 
-                  src={urlSrc} 
-                  alt={`Gallery image ${index + 1}`}
-                  className="swiper-image"
-                  loading="lazy"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      )}
+                    src={urlSrc} 
+                    alt={`Gallery image ${index + 1}`}
+                    className="personPageSwiper__swiper-image"
+                    loading="lazy"
+                  />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          </>
+        )}
+      </div>
     </div>
   );
 };
